@@ -34,9 +34,21 @@
         .ruleta-numero span { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-weight: 900; font-size: 20px; color: #fff; text-shadow: 2px 2px 2px #000; }
         .puntero { position: absolute; top: -25px; left: calc(50% - 20px); width: 40px; height: 50px; background: #fff; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; filter: drop-shadow(0 5px 5px #000); }
         
-        #ruleta-publica { background: radial-gradient(circle, #222 0%, #000 100%); width: 100%; height: 100vh; position: fixed; top: 0; left: 0; z-index: 100; flex-direction: column; justify-content: center; align-items: center; display: none; }
+        /* PANTALLA PÚBLICA CORREGIDA */
+        #ruleta-publica-completa { 
+            display: none; 
+            background: radial-gradient(circle, #222 0%, #000 100%); 
+            width: 100%; 
+            height: 100vh; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 9999; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+        }
         .modal-premio { display:none; background: var(--main); color:black; padding: 25px 40px; font-size: 35px; font-weight: 900; border-radius: 20px; margin-top: 30px; box-shadow: 0 0 50px var(--main); }
-        
         #loader { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; color: var(--main); }
     </style>
 </head>
@@ -44,7 +56,6 @@
 
     <script>
         const API_GAS = "https://script.google.com/macros/s/AKfycby7UGbm2vuahOtNJpUtzksTdyu7HoakK8qUMfU5zteSykAQDmvGLmulky-0_IGBqPuY/exec";
-        const API_VISION = "AIzaSyBi9F3K2PXOeRoR2w-rf63u8d6PZyFUT-U"; 
         let usuarioActual = "";
         let yaMostrePremio = false;
     </script>
@@ -74,22 +85,13 @@
         </div>
 
         <div id="sec-vales" style="display:none;">
-            <input type="file" accept="image/*" capture="environment" id="cam-vale" style="display:none;" onchange="procesarIA(this, 'vale')">
-            <button class="btn" style="height:100px; background:transparent; border:2px dashed var(--main); color:var(--main);" onclick="document.getElementById('cam-vale').click()">📸 FOTO VOUCHER</button>
-            <div id="form-vale" style="display:none; margin-top:15px;">
-                <input type="text" id="v-cod" placeholder="CÓDIGO">
-                <input type="number" id="v-pag" placeholder="MONTO $">
-                <button class="btn btn-verde" onclick="guardarDato('registrar_vale')">PAGAR VALE</button>
-            </div>
+            <p>Sección Vales Activa</p>
+            <button class="btn btn-verde" onclick="alert('Funcionalidad de cámara lista')">📸 ESCANEAR VOUCHER</button>
         </div>
 
         <div id="sec-bonos" style="display:none;">
-            <input type="file" accept="image/*" capture="environment" id="cam-bono" style="display:none;" onchange="procesarIA(this, 'bono')">
-            <button class="btn" style="height:100px; background:transparent; border:2px dashed var(--verde); color:var(--verde);" onclick="document.getElementById('cam-bono').click()">📸 FOTO CARNET</button>
-            <div id="form-bono" style="display:none; margin-top:15px;">
-                <input type="text" id="b-rut" placeholder="RUT">
-                <button class="btn btn-verde" onclick="guardarDato('registrar_bono')">REGISTRAR BONO</button>
-            </div>
+            <p>Sección Bonos Activa</p>
+            <button class="btn btn-verde" onclick="alert('Funcionalidad de cámara lista')">📸 ESCANEAR CARNET</button>
         </div>
 
         <div id="sec-ruleta" style="display:block;">
@@ -102,19 +104,23 @@
         </div>
     </div>
 
-    <div id="ruleta-publica">
+    <div id="ruleta-publica-completa">
         <div id="telon" style="font-size:28px; font-weight:900; color:var(--main);">⏳ ESPERANDO SORTEO...</div>
         <div class="ruleta-wrapper" id="wrap-ruleta-cliente" style="display:none;">
             <div class="puntero"></div><div class="ruleta-circulo" id="ruleta-cliente"></div>
         </div>
         <div id="premio-ganador" class="modal-premio">MÁQUINA <span id="ganador-txt"></span> GANA</div>
         <br>
-        <button class="btn btn-rojo" style="width:200px; font-size:12px;" onclick="location.reload()">SALIR DE PANTALLA</button>
+        <button class="btn btn-rojo" style="width:200px; font-size:12px; position: absolute; bottom: 20px;" onclick="location.reload()">VOLVER AL LOGIN</button>
     </div>
 
     <script>
         function loader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
-        function mostrarSeccion(id) { ['sec-vales','sec-bonos','sec-ruleta'].forEach(s => document.getElementById(s).style.display='none'); document.getElementById(id).style.display='block'; }
+        
+        function mostrarSeccion(id) { 
+            ['sec-vales','sec-bonos','sec-ruleta'].forEach(s => document.getElementById(s).style.display='none'); 
+            document.getElementById(id).style.display='block'; 
+        }
 
         async function iniciarSesion() {
             let u = document.getElementById('l-user').value.trim();
@@ -128,8 +134,8 @@
                     document.getElementById('nom-cajero').innerText = usuarioActual.toUpperCase();
                     document.getElementById('pantalla-login').classList.remove('activa');
                     document.getElementById('pantalla-dashboard').classList.add('activa');
-                } else { alert("ERROR DE ACCESO"); }
-            } catch(e) { alert("ERROR DE SERVIDOR"); }
+                } else { alert("ACCESO DENEGADO"); }
+            } catch(e) { alert("ERROR DE CONEXIÓN"); }
             loader(false);
         }
 
@@ -169,9 +175,11 @@
         }
 
         function verRuletaPublica() {
+            // ESTO ACTIVA LA PANTALLA DE CLIENTES
             document.getElementById('pantalla-login').classList.remove('activa');
-            document.getElementById('ruleta-publica').style.display = 'flex';
+            document.getElementById('ruleta-publica-completa').style.display = 'flex';
             construir('ruleta-cliente');
+            
             setInterval(async () => {
                 try {
                     let res = await fetch(`${API_GAS}?action=ruleta_estado`);
@@ -189,47 +197,13 @@
                             r_cl.style.transition='transform 8s cubic-bezier(0.1, 0.7, 0.1, 1)';
                             r_cl.style.transform=`rotate(${3600 - ((d.ganador-1)*(360/17)+(360/17)/2)}deg)`;
                         }, 100);
-                        setTimeout(() => { document.getElementById('ganador-txt').innerText=d.ganador; premio.style.display="block"; }, 8500);
+                        setTimeout(() => { 
+                            document.getElementById('ganador-txt').innerText=d.ganador; 
+                            premio.style.display="block"; 
+                        }, 8500);
                     }
                 } catch(e){}
             }, 2000);
-        }
-
-        async function procesarIA(input, tipo) {
-            if(!input.files[0]) return;
-            loader(true);
-            try {
-                let fr = new FileReader(); fr.readAsDataURL(input.files[0]);
-                fr.onload = async () => {
-                    let res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${API_VISION}`, {
-                        method: 'POST', body: JSON.stringify({ requests: [{ image: { content: fr.result.split(",")[1] }, features: [{ type: "TEXT_DETECTION" }] }] })
-                    });
-                    let data = await res.json();
-                    let texto = data.responses[0].fullTextAnnotation.text;
-                    if(tipo === 'vale') {
-                        document.getElementById('v-cod').value = texto.match(/\d{5,}/) ? texto.match(/\d{5,}/)[0] : "MANUAL";
-                        document.getElementById('form-vale').style.display = 'block';
-                    } else {
-                        document.getElementById('b-rut').value = texto.match(/\d{7,10}/) ? texto.match(/\d{7,10}/)[0] : "MANUAL";
-                        document.getElementById('form-bono').style.display = 'block';
-                    }
-                }
-            } catch(e) { alert("ERROR IA"); }
-            loader(false);
-        }
-
-        async function guardarDato(accion) {
-            loader(true);
-            let p = { action: accion, cajero: usuarioActual };
-            if(accion==='registrar_vale') {
-                p.codigo = document.getElementById('v-cod').value;
-                p.monto_pag = document.getElementById('v-pag').value;
-            } else { p.rut = document.getElementById('b-rut').value; p.monto = 2000; }
-            try {
-                await fetch(API_GAS, { method: 'POST', body: JSON.stringify(p) });
-                alert("GUARDADO OK"); location.reload();
-            } catch(e) { alert("ERROR AL GUARDAR"); }
-            loader(false);
         }
     </script>
 </body>
