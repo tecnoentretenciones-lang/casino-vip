@@ -55,7 +55,7 @@
 
     <script>
         const API_GAS = "https://script.google.com/macros/s/AKfycbwOmMwYOysgrE-ZS6s1OxfnY63G8s4F9FhzsJU9jqufLflVmeaOADowLPrQi2r4RemO/exec";
-        const API_VISION = "TU_CLAVE_DE_GOOGLE_AQUI"; // <-- Pega tu llave aquí
+        const API_VISION = "AIzaSyBi9F3K2PXOeRoR2w-rf63u8d6PZyFUT-U"; 
         let usuarioActual = "";
         let fotoBase64Temporal = "";
     </script>
@@ -292,7 +292,6 @@
             fotoBase64Temporal = await comprimirImagen(input.files[0]);
             
             try {
-                if(API_VISION === "TU_CLAVE_DE_GOOGLE_AQUI") throw new Error("Falta API KEY");
                 let body = { requests: [{ image: { content: fotoBase64Temporal.split(",")[1] }, features: [{ type: "TEXT_DETECTION" }] }] };
                 let response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${API_VISION}`, { method: 'POST', body: JSON.stringify(body) });
                 let data = await response.json();
