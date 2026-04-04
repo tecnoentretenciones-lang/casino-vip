@@ -6,19 +6,18 @@
     <title>CASINO VIP - BAZZAN</title>
     <style>
         :root { --main: #f39c12; --bg: #0d0d0d; --box: #1a1a1a; --rojo: #e74c3c; --verde: #2ecc71; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; text-align: center; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; text-align: center; overflow-x: hidden; }
         
         .pantalla { display: none; padding: 20px; max-width: 500px; margin: 0 auto; min-height: 100vh; }
-        .activa { display: block; }
+        .activa { display: block !important; }
         
-        /* LOGO ORIGINAL */
         .logo-container { margin: 30px 0; }
         .logo-text { font-size: 50px; font-weight: 900; color: var(--main); letter-spacing: -2px; margin: 0; }
         .sub-text { color: #555; letter-spacing: 4px; font-size: 14px; margin-top: -5px; }
 
         input { width: 100%; background: #000; color: var(--main); border: 1px solid #333; padding: 18px; border-radius: 12px; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; text-align: center; outline: none; }
         
-        .btn { background: var(--main); color: #000; border: none; padding: 20px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase; margin-bottom: 15px; transition: 0.2s; }
+        .btn { background: var(--main); color: #000; border: none; padding: 20px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase; margin-bottom: 15px; }
         .btn:active { transform: scale(0.96); }
         .btn-secundario { background: #1a1a1a; color: #fff; border: 1px solid #333; }
         .btn-rojo { background: var(--rojo); color: #fff; }
@@ -27,15 +26,15 @@
         .header-cajero { background: var(--box); padding: 20px; border-radius: 0 0 25px 25px; border-bottom: 2px solid var(--main); margin-bottom: 25px; }
         .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
 
-        /* RULETA MEJORADA */
-        .ruleta-wrapper { position: relative; width: 320px; height: 320px; margin: 30px auto; }
-        .pequena { transform: scale(0.7); margin: -50px auto; }
+        /* RULETA */
+        .ruleta-wrapper { position: relative; width: 320px; height: 320px; margin: 30px auto; display: block; }
+        .pequena { transform: scale(0.7); margin: -40px auto; }
         .ruleta-circulo { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #fff; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; background: #222; }
         .ruleta-numero { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; }
         .ruleta-numero span { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-weight: 900; font-size: 20px; color: #fff; text-shadow: 2px 2px 2px #000; }
         .puntero { position: absolute; top: -25px; left: calc(50% - 20px); width: 40px; height: 50px; background: #fff; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; filter: drop-shadow(0 5px 5px #000); }
         
-        #ruleta-publica { background: radial-gradient(circle, #222 0%, #000 100%); height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #ruleta-publica { background: radial-gradient(circle, #222 0%, #000 100%); width: 100%; height: 100vh; position: fixed; top: 0; left: 0; z-index: 100; flex-direction: column; justify-content: center; align-items: center; display: none; }
         .modal-premio { display:none; background: var(--main); color:black; padding: 25px 40px; font-size: 35px; font-weight: 900; border-radius: 20px; margin-top: 30px; box-shadow: 0 0 50px var(--main); }
         
         #loader { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; color: var(--main); }
@@ -48,7 +47,6 @@
         const API_VISION = "AIzaSyBi9F3K2PXOeRoR2w-rf63u8d6PZyFUT-U"; 
         let usuarioActual = "";
         let yaMostrePremio = false;
-        let fotoTemporal = "";
     </script>
 
     <div id="loader"><h2>PROCESANDO...</h2></div>
@@ -68,7 +66,6 @@
         <div class="header-cajero">
             <h3 style="margin:0; color:var(--main);">CAJERO: <span id="nom-cajero"></span></h3>
         </div>
-
         <div class="nav-grid">
             <button class="btn btn-secundario" onclick="mostrarSeccion('sec-vales')">🧾 VALES</button>
             <button class="btn btn-secundario" onclick="mostrarSeccion('sec-bonos')">🎁 BONOS</button>
@@ -81,7 +78,6 @@
             <button class="btn" style="height:100px; background:transparent; border:2px dashed var(--main); color:var(--main);" onclick="document.getElementById('cam-vale').click()">📸 FOTO VOUCHER</button>
             <div id="form-vale" style="display:none; margin-top:15px;">
                 <input type="text" id="v-cod" placeholder="CÓDIGO">
-                <input type="number" id="v-maq" placeholder="MÁQUINA #">
                 <input type="number" id="v-pag" placeholder="MONTO $">
                 <button class="btn btn-verde" onclick="guardarDato('registrar_vale')">PAGAR VALE</button>
             </div>
@@ -106,12 +102,14 @@
         </div>
     </div>
 
-    <div id="ruleta-publica" class="pantalla">
+    <div id="ruleta-publica">
         <div id="telon" style="font-size:28px; font-weight:900; color:var(--main);">⏳ ESPERANDO SORTEO...</div>
         <div class="ruleta-wrapper" id="wrap-ruleta-cliente" style="display:none;">
             <div class="puntero"></div><div class="ruleta-circulo" id="ruleta-cliente"></div>
         </div>
         <div id="premio-ganador" class="modal-premio">MÁQUINA <span id="ganador-txt"></span> GANA</div>
+        <br>
+        <button class="btn btn-rojo" style="width:200px; font-size:12px;" onclick="location.reload()">SALIR DE PANTALLA</button>
     </div>
 
     <script>
@@ -121,7 +119,6 @@
         async function iniciarSesion() {
             let u = document.getElementById('l-user').value.trim();
             let p = document.getElementById('l-pass').value.trim();
-            if(!u || !p) return alert("Faltan datos");
             loader(true);
             try {
                 const resp = await fetch(`${API_GAS}?action=login&u=${u}&p=${p}`);
@@ -131,8 +128,8 @@
                     document.getElementById('nom-cajero').innerText = usuarioActual.toUpperCase();
                     document.getElementById('pantalla-login').classList.remove('activa');
                     document.getElementById('pantalla-dashboard').classList.add('activa');
-                } else { alert("ACCESO DENEGADO"); }
-            } catch(e) { alert("ERROR DE CONEXIÓN"); }
+                } else { alert("ERROR DE ACCESO"); }
+            } catch(e) { alert("ERROR DE SERVIDOR"); }
             loader(false);
         }
 
@@ -140,21 +137,23 @@
             let r = document.getElementById(id); r.innerHTML = '';
             let ang = 360/17;
             let cols = ['#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00','#00FA9A'];
-            let bg = 'conic-gradient(';
             for(let i=1; i<=17; i++) {
-                bg += `${cols[(i-1)%cols.length]} ${(i-1)*ang}deg ${i*ang}deg${i<17?',':')'}`;
                 let n = document.createElement('div'); n.className='ruleta-numero';
                 n.style.transform=`rotate(${(i-1)*ang + ang/2}deg)`;
                 n.innerHTML=`<span>${i}</span>`;
                 r.appendChild(n);
             }
+            let bg = 'conic-gradient(';
+            for(let i=1; i<=17; i++) { bg += `${cols[(i-1)%cols.length]} ${(i-1)*ang}deg ${i*ang}deg${i<17?',':')'}`; }
             r.style.background = bg;
         }
-        construir('ruleta-cajero'); construir('ruleta-cliente');
 
         async function controlRuleta(cmd, gan="") {
             if(cmd==='APAGAR') document.getElementById('wrap-ruleta-cajero').style.display='none';
-            if(cmd==='ACTIVAR') document.getElementById('wrap-ruleta-cajero').style.display='block';
+            if(cmd==='ACTIVAR') {
+                document.getElementById('wrap-ruleta-cajero').style.display='block';
+                construir('ruleta-cajero');
+            }
             fetch(`${API_GAS}?action=ruleta_control&comando=${cmd}&ganador=${gan}`);
         }
 
@@ -171,7 +170,8 @@
 
         function verRuletaPublica() {
             document.getElementById('pantalla-login').classList.remove('activa');
-            document.getElementById('ruleta-publica').classList.add('activa');
+            document.getElementById('ruleta-publica').style.display = 'flex';
+            construir('ruleta-cliente');
             setInterval(async () => {
                 try {
                     let res = await fetch(`${API_GAS}?action=ruleta_estado`);
@@ -201,9 +201,8 @@
             try {
                 let fr = new FileReader(); fr.readAsDataURL(input.files[0]);
                 fr.onload = async () => {
-                    fotoTemporal = fr.result;
                     let res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${API_VISION}`, {
-                        method: 'POST', body: JSON.stringify({ requests: [{ image: { content: fotoTemporal.split(",")[1] }, features: [{ type: "TEXT_DETECTION" }] }] })
+                        method: 'POST', body: JSON.stringify({ requests: [{ image: { content: fr.result.split(",")[1] }, features: [{ type: "TEXT_DETECTION" }] }] })
                     });
                     let data = await res.json();
                     let texto = data.responses[0].fullTextAnnotation.text;
@@ -224,12 +223,11 @@
             let p = { action: accion, cajero: usuarioActual };
             if(accion==='registrar_vale') {
                 p.codigo = document.getElementById('v-cod').value;
-                p.maquina = document.getElementById('v-maq').value;
                 p.monto_pag = document.getElementById('v-pag').value;
             } else { p.rut = document.getElementById('b-rut').value; p.monto = 2000; }
             try {
                 await fetch(API_GAS, { method: 'POST', body: JSON.stringify(p) });
-                alert("REGISTRO EXITOSO"); location.reload();
+                alert("GUARDADO OK"); location.reload();
             } catch(e) { alert("ERROR AL GUARDAR"); }
             loader(false);
         }
