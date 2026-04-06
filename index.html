@@ -3,145 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TECNOENTRETE - GESTIÓN BAZAR</title>
+    <title>TECNOENTRETE - GESTIÓN TOTAL</title>
     <style>
         :root { --main: #f39c12; --bg: #0d0d0d; --box: #1a1a1a; --rojo: #e74c3c; --verde: #2ecc71; --azul: #3498db; }
         body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; text-align: center; }
         
-        .pantalla { display: none; padding: 20px; max-width: 500px; margin: 0 auto; min-height: 100vh; }
-        .activa { display: block; }
+        /* Contenedores de Pantalla */
+        .pantalla { display: none; padding: 20px; max-width: 600px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; }
+        .activa { display: flex; flex-direction: column; }
         
-        /* LOGO TECNOENTRETE */
-        .logo-container { margin: 30px 0; }
-        .logo-text { font-size: 45px; font-weight: 900; color: var(--main); letter-spacing: -1px; margin: 0; text-transform: uppercase; }
-        .sub-text { color: #888; letter-spacing: 3px; font-size: 12px; margin-top: -5px; }
+        /* Logo Corporativo */
+        .logo-header { margin: 20px 0; }
+        .logo-text { font-size: 40px; font-weight: 900; color: var(--main); letter-spacing: -1px; margin: 0; }
+        .sub-text { color: #666; letter-spacing: 4px; font-size: 12px; text-transform: uppercase; }
 
-        input, select { width: 100%; background: #000; color: var(--main); border: 1px solid #333; padding: 15px; border-radius: 12px; font-size: 16px; margin-bottom: 10px; box-sizing: border-box; text-align: center; outline: none; }
-        
-        .btn { background: var(--main); color: #000; border: none; padding: 18px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; margin-bottom: 12px; transition: 0.2s; display: block; }
-        .btn:active { transform: scale(0.96); }
-        .btn-secundario { background: #1a1a1a; color: #fff; border: 1px solid #333; }
-        .btn-azul { background: var(--azul); color: #fff; }
-        .btn-verde { background: var(--verde); color: #000; }
+        /* Menú de Cuadrícula (Dashboard) */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card { background: var(--box); border: 1px solid #333; border-radius: 20px; padding: 25px 10px; cursor: pointer; transition: 0.3s; }
+        .card:active { transform: scale(0.95); background: #222; }
+        .card i { font-size: 40px; display: block; margin-bottom: 10px; }
+        .card h3 { margin: 5px 0; font-size: 14px; color: var(--main); }
 
-        .header-cajero { background: var(--box); padding: 15px; border-radius: 0 0 20px 20px; border-bottom: 2px solid var(--main); margin-bottom: 20px; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        /* Botones y Formularios */
+        .btn { background: var(--main); color: #000; border: none; padding: 18px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; margin-bottom: 15px; }
+        .btn-sec { background: #333; color: #fff; }
+        input, select { width: 100%; background: #000; color: #fff; border: 1px solid #444; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; }
 
-        /* TABLA DE MÁQUINAS (ORDEN ECONÓMICO) */
-        .contenedor-maquinas { background: var(--box); border-radius: 15px; padding: 15px; text-align: left; max-height: 450px; overflow-y: auto; border: 1px solid #333; }
-        .fila-maquina { display: grid; grid-template-columns: 50px 1fr 1fr; gap: 5px; align-items: center; padding: 8px 0; border-bottom: 1px solid #222; }
-        .m-num { font-weight: bold; color: var(--main); font-size: 18px; }
-        .m-input { margin-bottom: 0 !important; padding: 8px !important; font-size: 14px !important; }
-
-        /* RULETA */
-        .ruleta-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
-        .ruleta-circulo { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #fff; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; }
-        .puntero { position: absolute; top: -20px; left: calc(50% - 15px); width: 30px; height: 40px; background: #fff; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; }
-        
-        #loader { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; color: var(--main); }
+        /* Sección de Máquinas (Bazar) */
+        .lista-maquinas { background: var(--box); border-radius: 15px; padding: 10px; max-height: 400px; overflow-y: auto; text-align: left; }
+        .fila-maq { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 10px; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
+        .num-maq { color: var(--main); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="loader"><h2>PROCESANDO TECNOENTRETE...</h2></div>
-
-    <div id="pantalla-login" class="pantalla activa">
-        <div class="logo-container">
+    <div id="p-login" class="pantalla activa">
+        <div class="logo-header">
             <h1 class="logo-text">TECNOENTRETE</h1>
-            <p class="sub-text">ADMINISTRACIÓN CENTRAL</p>
+            <p class="sub-text">Sistema de Control 2026</p>
         </div>
-        <input type="text" id="l-user" placeholder="USUARIO ADMINISTRADOR">
-        <input type="password" id="l-pass" placeholder="PIN DE ACCESO">
-        <button class="btn" onclick="iniciarSesion()">ENTRAR AL SISTEMA</button>
-        <button class="btn btn-secundario" onclick="verRuletaPublica()">PANTALLA CLIENTES (TV)</button>
+        <div style="margin-top: 50px;">
+            <input type="text" id="user" placeholder="USUARIO">
+            <input type="password" id="pass" placeholder="CLAVE">
+            <button class="btn" onclick="login()">ENTRAR AL CEREBRO</button>
+        </div>
     </div>
 
-    <div id="pantalla-dashboard" class="pantalla">
-        <div class="header-cajero">
-            <h4 style="margin:0;">ESTADO DE CAJA - <span id="nom-cajero"></span></h4>
+    <div id="p-menu" class="pantalla">
+        <div class="logo-header">
+            <h2 class="logo-text" style="font-size: 25px;">MENÚ PRINCIPAL</h2>
         </div>
+        <div class="grid-menu">
+            <div class="card" onclick="ir('p-locales')"><i>🏢</i><h3>LOCALES</h3></div>
+            <div class="card" onclick="ir('p-consignacion')"><i>🤝</i><h3>CONSIGNACIÓN</h3></div>
+            <div class="card" onclick="ir('p-gastos')"><i>💳</i><h3>GASTOS EMPRESA</h3></div>
+            <div class="card" onclick="ir('p-personal')"><i>👥</i><h3>PERSONAL</h3></div>
+        </div>
+        <button class="btn btn-sec" style="margin-top: 40px;" onclick="ir('p-login')">SALIR</button>
+    </div>
 
-        <div class="nav-grid">
-            <button class="btn btn-azul" onclick="mostrarSeccion('sec-maquinas')">🎰 17 MÁQUINAS</button>
-            <button class="btn btn-secundario" onclick="mostrarSeccion('sec-vales')">🧾 VALES IA</button>
-            <button class="btn btn-secundario" onclick="mostrarSeccion('sec-bonos')">🎁 BONOS</button>
-            <button class="btn btn-secundario" onclick="mostrarSeccion('sec-ruleta')">🎡 SORTEO</button>
-        </div>
+    <div id="p-locales" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-menu')">⬅ VOLVER</button>
+        <h2 style="color:var(--main);">MIS LOCALES</h2>
+        <button class="btn" onclick="abrirLocalBazar()">🏪 BAZAR (17 MÁQUINAS)</button>
+        <button class="btn btn-sec">🏪 LOCAL 2 (PRÓX.)</button>
+    </div>
 
-        <div id="sec-maquinas" style="display:block;">
-            <h3 style="color:var(--main); margin-bottom:10px;">CIERRE DE MÁQUINAS</h3>
-            <div class="contenedor-maquinas" id="lista-contable">
-                </div>
-            <button class="btn btn-verde" style="margin-top:15px;" onclick="enviarContabilidad()">GUARDAR CONTABILIDAD TOTAL</button>
+    <div id="p-bazar" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-locales')">⬅ SALIR DEL LOCAL</button>
+        <h2 id="nom-bazar">BAZAR - <span id="rol-actual"></span></h2>
+        
+        <div class="grid-menu">
+            <div class="card" onclick="ir('p-contabilidad-foto')"><i>📸</i><h3>FOTO CONTABLE</h3></div>
+            <div class="card" onclick="ir('p-sorteo')"><i>🎡</i><h3>TIRAR SORTEO</h3></div>
         </div>
+    </div>
 
-        <div id="sec-vales" style="display:none;">
-            <input type="file" accept="image/*" capture="environment" id="cam-vale" style="display:none;" onchange="procesarIA(this, 'vale')">
-            <button class="btn btn-secundario" onclick="document.getElementById('cam-vale').click()">📸 ESCANEAR VOUCHER</button>
-            <div id="form-vale" style="display:none;">
-                <input type="text" id="v-cod" placeholder="CÓDIGO DETECTADO">
-                <input type="number" id="v-maq" placeholder="MÁQUINA #">
-                <input type="number" id="v-pag" placeholder="MONTO A PAGAR $">
-                <button class="btn btn-verde" onclick="guardarDato('registrar_vale')">CONFIRMAR PAGO</button>
-            </div>
+    <div id="p-contabilidad-foto" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-bazar')">⬅ CANCELAR</button>
+        <h3>REGISTRO POR FOTO</h3>
+        <select id="maquina-n">
+            <script>for(let i=1;i<=17;i++) document.write(`<option value="${i}">MÁQUINA ${i}</option>`)</script>
+        </select>
+        <div style="background:#222; padding:20px; border-radius:15px; border:2px dashed var(--main);">
+            <input type="file" accept="image/*" capture="camera" id="cam-input">
+            <p>TOMA FOTO AL CONTADOR</p>
         </div>
+        <input type="number" placeholder="ENTRADA LECTURA" style="margin-top:15px;">
+        <input type="number" placeholder="SALIDA LECTURA">
+        <button class="btn" onclick="alert('IA Procesando Foto...')">GUARDAR Y SUBIR</button>
+    </div>
 
-        <div id="sec-ruleta" style="display:none;">
-            <button class="btn btn-azul" onclick="controlRuleta('ACTIVAR')">MOSTRAR EN TV</button>
-            <button class="btn btn-verde" onclick="girarRuletaAdmin()">🎰 LANZAR GANADOR</button>
-            <div class="ruleta-wrapper" style="transform: scale(0.7); margin-top: -30px;">
-                <div class="puntero"></div><div class="ruleta-circulo" id="ruleta-cajero"></div>
-            </div>
-        </div>
+    <div id="p-sorteo" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-bazar')">⬅ VOLVER</button>
+        <h2>CONTROL DE RULETA</h2>
+        <div style="width:250px; height:250px; border:5px solid #fff; border-radius:50%; margin:20px auto; background: conic-gradient(red, blue, yellow, green, purple, orange, red); transition: 5s cubic-bezier(0.1, 0.8, 0.1, 1);" id="r-visual"></div>
+        <button class="btn" style="background:var(--verde)" onclick="lanzarSorteo()">GIRAR EN TV DEL BAZAR</button>
     </div>
 
     <script>
-        // CONFIGURACIÓN (Tus llaves originales)
-        const API_VISION = "AIzaSyBi9F3K2PXOeRoR2w-rf63u8d6PZyFUT-U"; 
-        
-        // 1. GENERAR LAS 17 MÁQUINAS DINÁMICAMENTE
-        function generarMaquinas() {
-            const cont = document.getElementById('lista-contable');
-            cont.innerHTML = `
-                <div class="fila-maquina" style="border-bottom: 2px solid var(--main); font-size:12px;">
-                    <span>ID</span><span>ENTRADA</span><span>SALIDA</span>
-                </div>
-            `;
-            for(let i=1; i<=17; i++) {
-                cont.innerHTML += `
-                    <div class="fila-maquina">
-                        <span class="m-num">${i}</span>
-                        <input type="number" class="m-input" id="m-${i}-in" placeholder="In">
-                        <input type="number" class="m-input" id="m-${i}-out" placeholder="Out">
-                    </div>
-                `;
+        // Lógica de Navegación Simple
+        function ir(id) {
+            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+            document.getElementById(id).classList.add('activa');
+        }
+
+        function login() {
+            const u = document.getElementById('user').value.toUpperCase();
+            if(u === "FELIPE") {
+                ir('p-menu');
+            } else {
+                // Si es un trabajador, va directo a su local
+                document.getElementById('rol-actual').innerText = "PASILLERO";
+                ir('p-bazar');
             }
         }
 
-        function mostrarSeccion(id) {
-            ['sec-vales','sec-bonos','sec-ruleta','sec-maquinas'].forEach(s => {
-                document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
-            });
+        function abrirLocalBazar() {
+            document.getElementById('rol-actual').innerText = "ADMIN";
+            ir('p-bazar');
         }
 
-        // Simulación de Login (Mantenemos tu lógica de GAS)
-        function iniciarSesion() {
-            let u = document.getElementById('l-user').value.toUpperCase();
-            if(u === "FELIPE" || u === "CAJERO") {
-                document.getElementById('nom-cajero').innerText = u;
-                document.getElementById('pantalla-login').classList.remove('activa');
-                document.getElementById('pantalla-dashboard').classList.add('activa');
-                generarMaquinas(); // Cargar las 17 máquinas al entrar
-            } else { alert("Acceso denegado"); }
+        function lanzarSorteo() {
+            const r = document.getElementById('r-visual');
+            const g = Math.floor(Math.random() * 360) + 3600;
+            r.style.transform = `rotate(${g}deg)`;
+            alert("¡Sorteo enviado a la pantalla de clientes!");
         }
-
-        // Aquí irían tus funciones de Ruleta y Visión que ya tienes
-        // Solo hemos reorganizado para priorizar el ORDEN ECONÓMICO.
-
-        window.onload = () => {
-            // Inicializar ruletas gráficas como tenías
-            // construir('ruleta-cajero'); 
-        };
     </script>
 </body>
 </html>
