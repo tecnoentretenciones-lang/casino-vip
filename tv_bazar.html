@@ -4,40 +4,52 @@
     <meta charset="UTF-8">
     <title>SORTEO BAZAR EN VIVO</title>
     <style>
-        body { background: #000; color: gold; font-family: 'Arial Black', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .ruleta-gran { width: 500px; height: 500px; border-radius: 50%; border: 10px solid gold; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; box-shadow: 0 0 100px rgba(255,215,0,0.3); }
+        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .ruleta-gran { width: 500px; height: 500px; border-radius: 50%; border: 10px solid #fff; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; box-shadow: 0 0 100px #f39c12; }
         .puntero { width: 60px; height: 80px; background: #fff; clip-path: polygon(50% 100%, 0 0, 100% 0); margin-bottom: -30px; z-index: 10; position: relative; }
-        #premio { display: none; font-size: 80px; margin-top: 30px; animation: flash 1s infinite; }
-        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        #premio { font-size: 80px; color: #f39c12; margin-top: 40px; display: none; }
     </style>
 </head>
 <body>
-    <h1 id="texto">ESPERANDO PRÓXIMO SORTEO...</h1>
+    <h1 style="font-size: 50px; color: #f39c12;">TECNOENTRETE - SORTEO</h1>
     <div class="puntero"></div>
-    <div id="ruleta-tv" class="ruleta-gran"></div>
-    <div id="premio">¡MÁQUINA <span id="num-ganador"></span> GANA!</div>
+    <div id="r-tv" class="ruleta-gran"></div>
+    <div id="premio">MÁQUINA <span id="n-ganador"></span> GANA</div>
 
     <script>
-        const API_GAS = "TU_URL_DE_GOOGLE_APPS_SCRIPT";
-        
-        function dibujar() { /* Misma función de los 17 colores */ }
+        const colores = ['#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00','#00FA9A','#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00','#00FA9A','#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00'];
+        function dibujar() {
+            const r = document.getElementById('r-tv');
+            let bg = 'conic-gradient('; const ang = 360/17;
+            for(let i=1; i<=17; i++){
+                bg += `${colores[i-1]} ${(i-1)*ang}deg ${i*ang}deg${i<17?',':')'}`;
+                let d = document.createElement('div'); d.style.position='absolute'; d.style.width='100%'; d.style.height='100%';
+                d.style.transform=`rotate(${(i-1)*ang + ang/2}deg)`;
+                d.innerHTML=`<span style="position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:40px; font-weight:900;">${i}</span>`;
+                r.appendChild(d);
+            }
+            r.style.background = bg;
+        }
 
-        // Sistema de "Escucha": Revisa cada 2 segundos si el cajero apretó el botón
-        setInterval(async () => {
-            let res = await fetch(`${API_GAS}?action=ruleta_estado&local=BAZAR`);
-            let d = await res.json();
-            
-            if(d.estado === "GIRANDO") {
-                document.getElementById('texto').style.display = 'none';
-                const r = document.getElementById('ruleta-tv');
-                r.style.transform = `rotate(${3600 - ((d.ganador-1)*(360/17)+(360/17)/2)}deg)`;
-                
+        let ultimoVisto = "";
+        setInterval(() => {
+            let actual = localStorage.getItem('ultimo_ganador');
+            if(actual && actual !== ultimoVisto) {
+                ultimoVisto = actual;
+                const r = document.getElementById('r-tv');
+                r.style.transition = 'none'; r.style.transform = 'rotate(0deg)';
+                document.getElementById('premio').style.display='none';
                 setTimeout(() => {
-                    document.getElementById('num-ganador').innerText = d.ganador;
-                    document.getElementById('premio').style.display = 'block';
+                    r.style.transition = 'transform 8s cubic-bezier(0.1, 0.7, 0.1, 1)';
+                    r.style.transform = `rotate(${3600 - ((actual-1)*(360/17)+(360/17)/2)}deg)`;
+                }, 100);
+                setTimeout(() => {
+                    document.getElementById('n-ganador').innerText = actual;
+                    document.getElementById('premio').style.display='block';
                 }, 8500);
             }
-        }, 2000);
+        }, 1000);
+        dibujar();
     </script>
 </body>
 </html>
