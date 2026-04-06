@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECNOENTRETE - CONTROL BAZAR</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --main: #f39c12; --bg: #0d0d0d; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+        .ruleta-mini { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #fff; margin: 20px auto; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; }
+        .puntero { width: 30px; height: 30px; background: red; clip-path: polygon(50% 100%, 0 0, 100% 0); margin: -10px auto; z-index: 10; position: relative; }
+        .btn-sorteo { background: #2ecc71; color: #000; border: none; padding: 25px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>CONTROL SORTEO: BAZAR</h2>
+    <div class="puntero"></div>
+    <div id="ruleta-cajero" class="ruleta-mini"></div>
+    
+    <button class="btn-sorteo" onclick="lanzarSorteoBazar()">🎰 ¡GIRAR RULETA!</button>
+    <p id="msg-estado">Listo para el sorteo...</p>
+
+    <script>
+        const API_GAS = "TU_URL_DE_GOOGLE_APPS_SCRIPT"; // La que ya tienes
+
+        // Construir ruleta de 17 colores para el Bazar
+        function dibujarRuleta() {
+            const r = document.getElementById('ruleta-cajero');
+            const cols = ['#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00','#00FA9A'];
+            let bg = 'conic-gradient(';
+            let ang = 360/17;
+            for(let i=1; i<=17; i++) {
+                bg += `${cols[(i-1)%cols.length]} ${(i-1)*ang}deg ${i*ang}deg${i<17?',':')'}`;
+            }
+            r.style.background = bg;
+        }
+
+        async function lanzarSorteoBazar() {
+            let ganador = Math.floor(Math.random()*17)+1;
+            document.getElementById('msg-estado').innerText = "Girando en el local...";
+            
+            // 1. Avisar a la pantalla del cliente (Vía API)
+            await fetch(`${API_GAS}?action=ruleta_control&comando=GIRAR&ganador=${ganador}&local=BAZAR`);
+            
+            // 2. Girar la ruleta en MI pantalla
+            const r = document.getElementById('ruleta-cajero');
+            r.style.transition = 'none'; r.style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                r.style.transition = 'transform 8s cubic-bezier(0.1, 0.7, 0.1, 1)';
+                r.style.transform = `rotate(${3600 - ((ganador-1)*(360/17) + (360/17)/2)}deg)`;
+            }, 100);
+        }
+        window.onload = dibujarRuleta;
+    </script>
+</body>
+</html>
