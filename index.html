@@ -3,132 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TECNOENTRETE - GESTIÓN TOTAL</title>
+    <title>TECNOENTRETE - GESTIÓN BAZAR</title>
     <style>
-        :root { --main: #f39c12; --bg: #0d0d0d; --box: #1a1a1a; --rojo: #e74c3c; --verde: #2ecc71; --azul: #3498db; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; text-align: center; }
+        :root { --main: #f39c12; --bg: #0d0d0d; --box: #1a1a1a; --verde: #2ecc71; --rojo: #e74c3c; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
         
-        /* Contenedores de Pantalla */
-        .pantalla { display: none; padding: 20px; max-width: 600px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; }
-        .activa { display: flex; flex-direction: column; }
-        
-        /* Logo Corporativo */
-        .logo-header { margin: 20px 0; }
-        .logo-text { font-size: 40px; font-weight: 900; color: var(--main); letter-spacing: -1px; margin: 0; }
-        .sub-text { color: #666; letter-spacing: 4px; font-size: 12px; text-transform: uppercase; }
+        .pantalla { display: none; padding: 20px; max-width: 500px; margin: 0 auto; min-height: 100vh; flex-direction: column; }
+        .activa { display: flex; }
 
-        /* Menú de Cuadrícula (Dashboard) */
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .card { background: var(--box); border: 1px solid #333; border-radius: 20px; padding: 25px 10px; cursor: pointer; transition: 0.3s; }
-        .card:active { transform: scale(0.95); background: #222; }
-        .card i { font-size: 40px; display: block; margin-bottom: 10px; }
-        .card h3 { margin: 5px 0; font-size: 14px; color: var(--main); }
+        /* LOGO */
+        .logo-text { font-size: 45px; font-weight: 900; color: var(--main); margin: 20px 0 0 0; letter-spacing: -1px; }
+        .sub-text { color: #555; letter-spacing: 4px; font-size: 12px; margin-bottom: 30px; }
 
-        /* Botones y Formularios */
-        .btn { background: var(--main); color: #000; border: none; padding: 18px; width: 100%; border-radius: 15px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; margin-bottom: 15px; }
-        .btn-sec { background: #333; color: #fff; }
-        input, select { width: 100%; background: #000; color: #fff; border: 1px solid #444; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; }
+        /* FORMULARIOS */
+        input, select { width: 100%; background: #000; color: var(--main); border: 1px solid #333; padding: 18px; border-radius: 15px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 16px; outline: none; }
+        .btn { background: var(--main); color: #000; border: none; padding: 20px; width: 100%; border-radius: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; margin-bottom: 15px; }
+        .btn-sec { background: #222; color: #fff; border: 1px solid #444; }
 
-        /* Sección de Máquinas (Bazar) */
-        .lista-maquinas { background: var(--box); border-radius: 15px; padding: 10px; max-height: 400px; overflow-y: auto; text-align: left; }
-        .fila-maq { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 10px; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
-        .num-maq { color: var(--main); font-weight: bold; }
+        /* RULETA CLÁSICA (17 NÚMEROS) */
+        .ruleta-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        .ruleta-circulo { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #fff; position: relative; transition: transform 8s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; background: #222; }
+        .puntero { position: absolute; top: -25px; left: calc(50% - 20px); width: 40px; height: 50px; background: #fff; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; filter: drop-shadow(0 5px 5px #000); }
+        .ruleta-numero { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; }
+        .ruleta-numero span { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); font-weight: 900; font-size: 22px; color: #fff; text-shadow: 2px 2px 2px #000; }
+
+        /* MENÚ DASHBOARD */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: var(--box); padding: 20px; border-radius: 20px; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
     <div id="p-login" class="pantalla activa">
-        <div class="logo-header">
-            <h1 class="logo-text">TECNOENTRETE</h1>
-            <p class="sub-text">Sistema de Control 2026</p>
-        </div>
-        <div style="margin-top: 50px;">
-            <input type="text" id="user" placeholder="USUARIO">
-            <input type="password" id="pass" placeholder="CLAVE">
-            <button class="btn" onclick="login()">ENTRAR AL CEREBRO</button>
-        </div>
+        <h1 class="logo-text">TECNOENTRETE</h1>
+        <p class="sub-text">ADMINISTRACIÓN BAZAR</p>
+        <input type="text" id="l-user" placeholder="USUARIO (Cajero/Pasillero)">
+        <input type="password" id="l-pass" placeholder="CONTRASEÑA">
+        <button class="btn" onclick="iniciarSesion()">ACCEDER AL LOCAL</button>
+        <button class="btn btn-sec" onclick="ir('p-publico')">PANTALLA CLIENTES (TV)</button>
     </div>
 
-    <div id="p-menu" class="pantalla">
-        <div class="logo-header">
-            <h2 class="logo-text" style="font-size: 25px;">MENÚ PRINCIPAL</h2>
-        </div>
-        <div class="grid-menu">
-            <div class="card" onclick="ir('p-locales')"><i>🏢</i><h3>LOCALES</h3></div>
-            <div class="card" onclick="ir('p-consignacion')"><i>🤝</i><h3>CONSIGNACIÓN</h3></div>
-            <div class="card" onclick="ir('p-gastos')"><i>💳</i><h3>GASTOS EMPRESA</h3></div>
-            <div class="card" onclick="ir('p-personal')"><i>👥</i><h3>PERSONAL</h3></div>
-        </div>
-        <button class="btn btn-sec" style="margin-top: 40px;" onclick="ir('p-login')">SALIR</button>
-    </div>
-
-    <div id="p-locales" class="pantalla">
-        <button class="btn btn-sec" onclick="ir('p-menu')">⬅ VOLVER</button>
-        <h2 style="color:var(--main);">MIS LOCALES</h2>
-        <button class="btn" onclick="abrirLocalBazar()">🏪 BAZAR (17 MÁQUINAS)</button>
-        <button class="btn btn-sec">🏪 LOCAL 2 (PRÓX.)</button>
-    </div>
-
-    <div id="p-bazar" class="pantalla">
-        <button class="btn btn-sec" onclick="ir('p-locales')">⬅ SALIR DEL LOCAL</button>
-        <h2 id="nom-bazar">BAZAR - <span id="rol-actual"></span></h2>
+    <div id="p-admin" class="pantalla">
+        <h2 style="color:var(--main); margin-bottom:5px;">PANEL <span id="txt-rol"></span></h2>
+        <p id="txt-local">LOCAL: BAZAR</p>
         
-        <div class="grid-menu">
-            <div class="card" onclick="ir('p-contabilidad-foto')"><i>📸</i><h3>FOTO CONTABLE</h3></div>
-            <div class="card" onclick="ir('p-sorteo')"><i>🎡</i><h3>TIRAR SORTEO</h3></div>
+        <div class="menu-grid">
+            <div class="card" onclick="ir('p-contabilidad')">📸<br>FOTOS</div>
+            <div class="card" onclick="ir('p-sorteo-admin')">🎡<br>SORTEO</div>
+            <div class="card" onclick="alert('Próximamente: Gastos')">💳<br>GASTOS</div>
+            <div class="card" onclick="location.reload()">🚪<br>SALIR</div>
         </div>
     </div>
 
-    <div id="p-contabilidad-foto" class="pantalla">
-        <button class="btn btn-sec" onclick="ir('p-bazar')">⬅ CANCELAR</button>
-        <h3>REGISTRO POR FOTO</h3>
-        <select id="maquina-n">
+    <div id="p-contabilidad" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-admin')">⬅ VOLVER</button>
+        <h3>CONTABILIDAD POR FOTO</h3>
+        <select id="sel-maq">
             <script>for(let i=1;i<=17;i++) document.write(`<option value="${i}">MÁQUINA ${i}</option>`)</script>
         </select>
-        <div style="background:#222; padding:20px; border-radius:15px; border:2px dashed var(--main);">
-            <input type="file" accept="image/*" capture="camera" id="cam-input">
-            <p>TOMA FOTO AL CONTADOR</p>
-        </div>
-        <input type="number" placeholder="ENTRADA LECTURA" style="margin-top:15px;">
-        <input type="number" placeholder="SALIDA LECTURA">
-        <button class="btn" onclick="alert('IA Procesando Foto...')">GUARDAR Y SUBIR</button>
+        <input type="file" accept="image/*" capture="camera">
+        <input type="number" placeholder="LECTURA ENTRADA">
+        <input type="number" placeholder="LECTURA SALIDA">
+        <button class="btn" style="background:var(--verde)">GUARDAR EN TECNOENTRETE</button>
     </div>
 
-    <div id="p-sorteo" class="pantalla">
-        <button class="btn btn-sec" onclick="ir('p-bazar')">⬅ VOLVER</button>
-        <h2>CONTROL DE RULETA</h2>
-        <div style="width:250px; height:250px; border:5px solid #fff; border-radius:50%; margin:20px auto; background: conic-gradient(red, blue, yellow, green, purple, orange, red); transition: 5s cubic-bezier(0.1, 0.8, 0.1, 1);" id="r-visual"></div>
-        <button class="btn" style="background:var(--verde)" onclick="lanzarSorteo()">GIRAR EN TV DEL BAZAR</button>
+    <div id="p-sorteo-admin" class="pantalla">
+        <button class="btn btn-sec" onclick="ir('p-admin')">⬅ VOLVER</button>
+        <div class="ruleta-wrapper">
+            <div class="puntero"></div>
+            <div id="r-cajero" class="ruleta-circulo"></div>
+        </div>
+        <button class="btn" style="background:var(--verde); font-size:20px;" onclick="lanzarGanador()">🎰 ¡LANZAR SORTEO!</button>
+        <h2 id="res-admin"></h2>
+    </div>
+
+    <div id="p-publico" class="pantalla">
+        <h1 class="logo-text" style="font-size:60px;">TECNOENTRETE</h1>
+        <div class="ruleta-wrapper" style="transform: scale(1.4); margin: 80px auto;">
+            <div class="puntero"></div>
+            <div id="r-cliente" class="ruleta-circulo"></div>
+        </div>
+        <h2 id="res-cliente" style="font-size:50px; color:var(--main);">ESPERANDO SORTEO...</h2>
     </div>
 
     <script>
-        // Lógica de Navegación Simple
+        // CONFIGURACIÓN DE LA RULETA (17 NÚMEROS)
+        function construirRuleta(id) {
+            const r = document.getElementById(id);
+            r.innerHTML = '';
+            const angulo = 360 / 17;
+            const colores = ['#E50914','#1E90FF','#FFD700','#8A2BE2','#FF8C00','#00FA9A'];
+            let bg = 'conic-gradient(';
+            
+            for(let i=1; i<=17; i++) {
+                bg += `${colores[(i-1)%colores.length]} ${(i-1)*angulo}deg ${i*angulo}deg${i<17?',':')'}`;
+                let div = document.createElement('div');
+                div.className = 'ruleta-numero';
+                div.style.transform = `rotate(${(i-1)*angulo + angulo/2}deg)`;
+                div.innerHTML = `<span>${i}</span>`;
+                r.appendChild(div);
+            }
+            r.style.background = bg;
+        }
+
+        // INICIO
+        window.onload = () => {
+            construirRuleta('r-cajero');
+            construirRuleta('r-cliente');
+        };
+
         function ir(id) {
             document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
             document.getElementById(id).classList.add('activa');
         }
 
-        function login() {
-            const u = document.getElementById('user').value.toUpperCase();
-            if(u === "FELIPE") {
-                ir('p-menu');
-            } else {
-                // Si es un trabajador, va directo a su local
-                document.getElementById('rol-actual').innerText = "PASILLERO";
-                ir('p-bazar');
-            }
+        function iniciarSesion() {
+            const u = document.getElementById('l-user').value.toUpperCase();
+            const p = document.getElementById('l-pass').value;
+            if(u && p) { // Aquí puedes validar contra tu GAS o Supabase
+                document.getElementById('txt-rol').innerText = u;
+                ir('p-admin');
+            } else { alert("Ingresa Usuario y Clave"); }
         }
 
-        function abrirLocalBazar() {
-            document.getElementById('rol-actual').innerText = "ADMIN";
-            ir('p-bazar');
-        }
+        function lanzarGanador() {
+            const ganador = Math.floor(Math.random() * 17) + 1;
+            const anguloIndividual = 360 / 17;
+            const giroTotal = 3600 - ((ganador - 1) * anguloIndividual + anguloIndividual / 2);
 
-        function lanzarSorteo() {
-            const r = document.getElementById('r-visual');
-            const g = Math.floor(Math.random() * 360) + 3600;
-            r.style.transform = `rotate(${g}deg)`;
-            alert("¡Sorteo enviado a la pantalla de clientes!");
+            // Sincronizar ambas ruletas (Cajero y Cliente)
+            [document.getElementById('r-cajero'), document.getElementById('r-cliente')].forEach(r => {
+                r.style.transition = 'none';
+                r.style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    r.style.transition = 'transform 8s cubic-bezier(0.1, 0.7, 0.1, 1)';
+                    r.style.transform = `rotate(${giroTotal}deg)`;
+                }, 100);
+            });
+
+            document.getElementById('res-admin').innerText = "SORTEANDO...";
+            setTimeout(() => {
+                const msg = "¡MÁQUINA " + ganador + " GANADORA!";
+                document.getElementById('res-admin').innerText = msg;
+                document.getElementById('res-cliente').innerText = msg;
+            }, 8500);
         }
     </script>
 </body>
